@@ -25,6 +25,10 @@ io.on('connection', (socket) => {
     tasks.push(task)
     socket.broadcast.emit('updateTasks', tasks)
   });
+  socket.on('editTask', editedTask => {
+    tasks = tasks.map(task => task.id === editedTask.id ? {...task, ...editedTask} : task);
+    socket.broadcast.emit('updateTasks', tasks);
+  })
 })
 
 app.use(express.static(path.join(__dirname, '/Client/build')));

@@ -1,6 +1,7 @@
 import io from 'socket.io-client';
 import shortid from 'shortid';
 import { useState, useEffect } from 'react';
+import Task from './Task';
 
 const  App = () => {
 
@@ -11,7 +12,6 @@ const  App = () => {
 
   useEffect(() => {
     socket.on('updateTasks', (tasksFromServer) => setTasks(tasksFromServer))
-    console.log('received!')
   }, []);
 
   const removeTask = taskId => {
@@ -24,6 +24,12 @@ const  App = () => {
     setTasks([...tasks, task])
     socket.emit('addTask', task)
   };
+
+  const editTask = (id, editedTodo) => {
+    const editedTask = { id, todo: editedTodo}
+    setTasks(tasks.map(task => task.id === editedTask.id ? {...task, ...editedTask} : task));
+    socket.emit('editTask', editedTask)
+  }
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -41,11 +47,7 @@ const  App = () => {
       <h2>Tasks</h2>
       <ul className="tasks-section__list" id="tasks-list">
         { 
-          tasks.map(task => (
-            <li key={task.id} className="task">{task.todo}
-              <button className="btn btn--red" onClick={() => removeTask(task.id)}>Remove</button>
-            </li>
-          ))
+          tasks.map(task => <Task key={task.id} removeTask={removeTask}  editTask={editTask} id={task.id} todo={task.todo}/>)
         }
       </ul>
       <form id="add-task-form" onSubmit={handleSubmit}>
