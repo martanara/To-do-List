@@ -11,24 +11,24 @@ const  App = () => {
   const socket = io('http://localhost:8000/');
 
   useEffect(() => {
-    socket.on('updateTasks', (tasksFromServer) => setTasks(tasksFromServer))
-  }, []);
+    socket.on('updateTasks', (tasksFromServer) => setTasks(tasksFromServer));
+  }, [socket]);
 
   const removeTask = taskId => {
-    setTasks(tasks.filter(task => task.id !== taskId))
-    socket.emit('removeTask', taskId)
+    setTasks(tasks.filter(task => task.id !== taskId));
+    socket.emit('removeTask', taskId);
   };
 
   const addTask = newTask => {
-    const task = { id: shortid(), todo: newTask }
-    setTasks([...tasks, task])
-    socket.emit('addTask', task)
+    const task = { id: shortid(), todo: newTask };
+    setTasks([...tasks, task]);
+    socket.emit('addTask', task);
   };
 
   const editTask = (id, editedTodo) => {
     const editedTask = { id, todo: editedTodo}
     setTasks(tasks.map(task => task.id === editedTask.id ? {...task, ...editedTask} : task));
-    socket.emit('editTask', editedTask)
+    socket.emit('editTask', editedTask);
   }
 
   const handleSubmit = e => {
